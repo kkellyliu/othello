@@ -16,7 +16,8 @@ Player::Player(Side side) {
      */
 
     playerBoard = new Board;
-    cout << "helllo" << endl;
+    mySide = side;
+    // cout << "helllo" << endl;
 }
 
 /*
@@ -43,8 +44,22 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
      * TODO: Implement how moves your AI should play here. You should first
      * process the opponent's opponents move before calculating your own move
      */
+    bool validMoveFound = false;
+    int moveX;
+    int moveY;
+    Move *m = new Move(0, 0);
 
-    return nullptr;
+    playerBoard->doMove(opponentsMove, otherSide(mySide));
+    while (!validMoveFound) {
+        moveX = rand() % 8;
+        moveY = rand() % 8;
+        m->setX(moveX);
+        m->setY(moveY);
+        validMoveFound = playerBoard->checkMove(m, mySide);
+    }
+    playerBoard->doMove(m, mySide);
+
+    return m;
 }
 
 int Player::heuristic(Board* board) {
