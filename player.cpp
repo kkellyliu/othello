@@ -14,6 +14,7 @@ Player::Player(Side side) {
      * precalculating things, etc.) However, remember that you will only have
      * 30 seconds.
      */
+    cout << "helllo" << endl;
 }
 
 /*
@@ -42,3 +43,4 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
      */
     return nullptr;
 }
+
