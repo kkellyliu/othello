@@ -50,16 +50,34 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
     Move *m = new Move(0, 0);
 
     playerBoard->doMove(opponentsMove, otherSide(mySide));
-    while (!validMoveFound) {
-        moveX = rand() % 8;
-        moveY = rand() % 8;
-        m->setX(moveX);
-        m->setY(moveY);
-        validMoveFound = playerBoard->checkMove(m, mySide);
-    }
-    playerBoard->doMove(m, mySide);
 
-    return m;
+    Move *bestMove = nullptr;
+    int bestScore = -99999;
+
+    vector<Move*> possibleMoves = getPossibleMoves(playerBoard);
+    for (unsigned int i = 0; i < possibleMoves.size(); i++) {
+        Board *tempBoard = playerBoard->copy();
+        tempBoard->doMove(possibleMoves[i], mySide);
+        int score = heuristic(tempBoard);
+        if (score > bestScore) {
+            bestScore = score;
+            bestMove = possibleMoves[i];
+        }
+    }
+
+    playerBoard->doMove(bestMove, mySide);
+
+    // simple random move implementation to be taken out later
+    // while (!validMoveFound) {
+    //     moveX = rand() % 8;
+    //     moveY = rand() % 8;
+    //     m->setX(moveX);
+    //     m->setY(moveY);
+    //     validMoveFound = playerBoard->checkMove(m, mySide);
+    // }
+    // playerBoard->doMove(m, mySide);
+
+    return bestMove;
 }
 
 int Player::heuristic(Board* board) {
@@ -74,5 +92,18 @@ Side Player::otherSide(Side side) {
     } else {
         return WHITE;
     }
+}
+
+vector<Move*> Player::getPossibleMoves(Board *board) {
+    vector<Move*> possMoves;
+    for (int x = 0; x < 8; x++) {
+        for (int y = 0; y < 8; y++) {
+            Move* testMove = new Move(x, y);
+            if (board->checkMove(testMove, mySide)) {
+                possMoves.push_back(testMove);
+            }
+        }
+    }
+    return possMoves;
 }
 

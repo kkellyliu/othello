@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <stdlib.h>
+#include <vector>
 #include "common.hpp"
 #include "board.hpp"
 using namespace std;
@@ -19,6 +20,7 @@ public:
     Move *doMove(Move *opponentsMove, int msLeft);
     int heuristic(Board* board);
     Side otherSide(Side side);
+    vector<Move*> getPossibleMoves(Board* board);
 
     // Flag to tell if the player is running within the test_minimax context
     bool testingMinimax;
