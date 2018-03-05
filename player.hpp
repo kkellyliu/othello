@@ -11,8 +11,13 @@ class Player {
 public:
     Player(Side side);
     ~Player();
+    Board *playerBoard;
+    Side mySide;
+
 
     Move *doMove(Move *opponentsMove, int msLeft);
+    int heuristic(Board* board);
+    Side otherSide(Side side);
 
     // Flag to tell if the player is running within the test_minimax context
     bool testingMinimax;

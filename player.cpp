@@ -14,6 +14,8 @@ Player::Player(Side side) {
      * precalculating things, etc.) However, remember that you will only have
      * 30 seconds.
      */
+
+    playerBoard = new Board;
     cout << "helllo" << endl;
 }
 
@@ -41,6 +43,21 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
      * TODO: Implement how moves your AI should play here. You should first
      * process the opponent's opponents move before calculating your own move
      */
+
     return nullptr;
+}
+
+int Player::heuristic(Board* board) {
+    int score = board->count(mySide) - board->count(otherSide(mySide));
+
+    return score;
+}
+
+Side Player::otherSide(Side side) {
+    if (side == WHITE) {
+        return BLACK;
+    } else {
+        return WHITE;
+    }
 }
 
