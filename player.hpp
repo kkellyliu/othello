@@ -19,6 +19,8 @@ public:
 
 
     Move *doMove(Move *opponentsMove, int msLeft);
+    int cornerSideScore(Move *m, int initialScore);
+    int cornerSideScore2(Move *m, int initialScore);
     int heuristic(Board* board);
     Side otherSide(Side side);
     vector<Move*> getPossibleMoves(Board* board, Side side);

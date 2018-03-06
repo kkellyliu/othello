@@ -49,6 +49,7 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
 
 
     // Minimax Implementation
+
     Move *bestMove = nullptr;
     int minMax = -99999;
 
@@ -65,12 +66,16 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
         for (unsigned int j = 0; j < possibleMoves2.size(); j++)
         {
             
+            // Calculates score of board after opposing player made its move
             Board *tempBoard2 = tempBoard1->copy();
             tempBoard2->doMove(possibleMoves2[j], otherSide(mySide));
             int score = heuristic(tempBoard2);
+            int finalScore = cornerSideScore2(possibleMoves2[j], score);
+            ScoreTracker.push_back(finalScore);
             ScoreTracker.push_back(score);
         }
 
+        // Finds the highest worst score for each of the player's possible moves.
         if (ScoreTracker.size() != 0)
         {
             int min = *min_element(ScoreTracker.begin(), ScoreTracker.end()); 
@@ -92,45 +97,22 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
     ////////////////////////////////////////////////////////////////////////////
     
     // Beats SimplePlayer
+
     // vector<Move*> possibleMoves = getPossibleMoves(playerBoard, mySide);
     // Move *bestMove = nullptr;
     // int bestScore = -99999;
     // for (unsigned int i = 0; i < possibleMoves.size(); i++) {
 
-    //     // declar some variable
+    //     // declare some variable
     //     Board *tempBoard = playerBoard->copy();
     //     Move *m = possibleMoves[i];
     //     tempBoard->doMove(m, mySide);
     //     int score = heuristic(tempBoard);
-
-    //     // giving extra priority to the edges and corners
-    //     bool xSide = m->getX() == 0 or m->getX() == 7;
-    //     bool ySide = m->getY() == 0 or m->getY() == 7;
-    //     if (xSide) {
-    //         score = score + 7;
-    //     }
-
-    //     if (ySide) {
-    //         score = score + 7;
-    //     }
-
-    //     if (ySide and xSide) {
-    //         score = score + 20;
-    //         cerr << score << endl;
-    //     }
-
-    //     // subtracting points for moves that give the opponent access to corners
-    //     bool corners = (m->getX() == 1 or m->getX() == 6) and (m->getY() == 1 or m->getY() == 6);
-    //     bool side1 = (m->getX() == 0 or m->getX() == 8) and (m->getY() == 1 or m->getY() == 6);
-    //     bool side2 = (m->getX() == 1 or m->getX() == 6) and (m->getY() == 0 or m->getY() == 8);
-        
-    //     if (corners or side1 or side2) {
-    //         score = score - 15;
-    //     }
+    //     int finalScore = cornerSideScore(m, score);
 
     //     // choosing the best move
-    //     if (score > bestScore) {
-    //         bestScore = score;
+    //     if (finalScore > bestScore) {
+    //         bestScore = finalScore;
     //         bestMove = possibleMoves[i];
     //     }
     // }
@@ -139,6 +121,7 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
     /////////////////////////////////////////////////////////////////////////////////
    
     // simple random move implementation 
+
     // declarations
     // int moveX;
     // int moveY;
@@ -160,8 +143,90 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
     return bestMove;
 }
 
+/* This function gives priorities to edges and corners, and gives penalties to moves
+ * that give the opponent access to corners. 
+ * Input: 
+ *      move: the attempted move
+ *      initialScore: score without taken into consideration edges and corners
+ * Outpt: 
+ *      score: the final score with penalties and prioties.
+ * 
+ */
 
-/* This function counds the difference between the scores given a certain board
+int Player::cornerSideScore(Move *m, int initialScore)
+{   
+        int score = initialScore;
+
+        // giving extra priority to the edges and corners
+        bool xSide = m->getX() == 0 or m->getX() == 7;
+        bool ySide = m->getY() == 0 or m->getY() == 7;
+        if (xSide) {
+            score = score + 7;
+        }
+
+        if (ySide) {
+            score = score + 7;
+        }
+
+        if (ySide and xSide) {
+            score = score + 20;
+        }
+
+        // subtracting points for moves that give the opponent access to corners
+        bool corners = (m->getX() == 1 or m->getX() == 6) and (m->getY() == 1 or m->getY() == 6);
+        bool side1 = (m->getX() == 0 or m->getX() == 8) and (m->getY() == 1 or m->getY() == 6);
+        bool side2 = (m->getX() == 1 or m->getX() == 6) and (m->getY() == 0 or m->getY() == 8);
+        
+        if (corners or side1 or side2) {
+            score = score - 15;
+        }
+
+        return score;
+}
+
+/* This function gives penalties to edges and corners, and gives priotities to moves
+ * that give the opponent access to corners. Used in minimax function in order to 
+ * give priority to moves that benefit the player.
+ * Input: 
+ *      move: the attempted move
+ *      initialScore: score without taken into consideration edges and corners
+ * Outpt: 
+ *      score: the final score with penalties and prioties.
+ * 
+ */
+
+int Player::cornerSideScore2(Move *m, int initialScore)
+{   
+        int score = initialScore;
+
+        // giving extra penalty to the edges and corners
+        bool xSide = m->getX() == 0 or m->getX() == 7;
+        bool ySide = m->getY() == 0 or m->getY() == 7;
+        if (xSide) {
+            score = score - 7;
+        }
+
+        if (ySide) {
+            score = score - 7;
+        }
+
+        if (ySide and xSide) {
+            score = score - 20;
+        }
+
+        // adding points for moves that give the opponent access to corners
+        bool corners = (m->getX() == 1 or m->getX() == 6) and (m->getY() == 1 or m->getY() == 6);
+        bool side1 = (m->getX() == 0 or m->getX() == 8) and (m->getY() == 1 or m->getY() == 6);
+        bool side2 = (m->getX() == 1 or m->getX() == 6) and (m->getY() == 0 or m->getY() == 8);
+        
+        if (corners or side1 or side2) {
+            score = score + 15;
+        }
+
+        return score;
+}
+
+/* This function counts the difference between the scores given a certain board
  * Input:
  *      board: the board to calculate the score for 
  * Output:
@@ -169,7 +234,6 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
  */
 int Player::heuristic(Board* board) {
     int score = board->count(mySide) - board->count(otherSide(mySide));
-
 
     return score;
 }
