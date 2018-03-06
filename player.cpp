@@ -44,18 +44,14 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
      * TODO: Implement how moves your AI should play here. You should first
      * process the opponent's opponents move before calculating your own move
      */
-    //cerr << "hello" << endl;
-    bool validMoveFound = false;
-    int moveX;
-    int moveY;
-    Move *m = new Move(0, 0);
 
+    // do the opponent's move
     playerBoard->doMove(opponentsMove, otherSide(mySide));
 
-    //cerr << "performed other" << endl;
+
+    // Minimax Implementation
     Move *bestMove = nullptr;
     int minMax = -99999;
-
 
     vector<Move*> possibleMoves1 = getPossibleMoves(playerBoard, mySide);
     //cerr << "possible moves fine " << endl;
@@ -94,47 +90,98 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
         }
     }
 
-
+    ////////////////////////////////////////////////////////////////////////////
+    
     // Beats SimplePlayer
     // vector<Move*> possibleMoves = getPossibleMoves(playerBoard, mySide);
     // Move *bestMove = nullptr;
     // int bestScore = -99999;
     // for (unsigned int i = 0; i < possibleMoves.size(); i++) {
+
+    //     // declar some variable
     //     Board *tempBoard = playerBoard->copy();
-    //     tempBoard->doMove(possibleMoves[i], mySide);
+    //     Move *m = possibleMoves[i];
+    //     tempBoard->doMove(m, mySide);
     //     int score = heuristic(tempBoard);
+
+    //     // giving extra priority to the edges and corners
+    //     bool xSide = m->getX() == 0 or m->getX() == 7;
+    //     bool ySide = m->getY() == 0 or m->getY() == 7;
+    //     if (xSide) {
+    //         score = score + 7;
+    //     }
+
+    //     if (ySide) {
+    //         score = score + 7;
+    //     }
+
+    //     if (ySide and xSide) {
+    //         score = score + 20;
+    //         cerr << score << endl;
+    //     }
+
+    //     // subtracting points for moves that give the opponent access to corners
+    //     bool corners = (m->getX() == 1 or m->getX() == 6) and (m->getY() == 1 or m->getY() == 6);
+    //     bool side1 = (m->getX() == 0 or m->getX() == 8) and (m->getY() == 1 or m->getY() == 6);
+    //     bool side2 = (m->getX() == 1 or m->getX() == 6) and (m->getY() == 0 or m->getY() == 8);
+        
+    //     if (corners or side1 or side2) {
+    //         score = score - 15;
+    //     }
+
+    //     // choosing the best move
     //     if (score > bestScore) {
     //         bestScore = score;
     //         bestMove = possibleMoves[i];
     //     }
     // }
 
-    
 
-
-
-
-    // simple random move implementation to be taken out later
+    /////////////////////////////////////////////////////////////////////////////////
+   
+    // simple random move implementation 
+    // declarations
+    // int moveX;
+    // int moveY;
+    // Move *bestMove = new Move(0, 0);
+    // bool validMoveFound = false;
+    // // randomly find a valid move
     // while (!validMoveFound) {
+    //     // get random moves and check if they're valid
     //     moveX = rand() % 8;
     //     moveY = rand() % 8;
-    //     m->setX(moveX);
-    //     m->setY(moveY);
-    //     validMoveFound = playerBoard->checkMove(m, mySide);
+    //     bestMove->setX(moveX);
+    //     bestMove->setY(moveY);
+    //     validMoveFound = playerBoard->checkMove(bestMove, mySide);
     // }
-    // playerBoard->doMove(m, mySide);
 
+    // once best move has been determined, we do the move and return it 
     playerBoard->doMove(bestMove, mySide);
 
     return bestMove;
 }
 
+
+/* This function counds the difference between the scores given a certain board
+ * Input:
+ *      board: the board to calculate the score for 
+ * Output:
+ *      score: the score with positive being winning and negative being losing
+ */
 int Player::heuristic(Board* board) {
     int score = board->count(mySide) - board->count(otherSide(mySide));
+
 
     return score;
 }
 
+
+/* This function returns the color of the opposing side
+ * Input: 
+ *      side: the side the player currently is
+ * Output: 
+ *      the color of the opposing team
+ */
 Side Player::otherSide(Side side) {
     if (side == WHITE) {
         return BLACK;
@@ -143,18 +190,25 @@ Side Player::otherSide(Side side) {
     }
 }
 
-// Retrieves all possible moves for specified side 
+/* This function retrieves all possible moves for a side given a board
+ * Inputs:
+ *      side: the side you want the moves for
+ *      board: the game board
+ * Outputs:
+ *      possMoves: a vector containing all the possible moves
+ */
 vector<Move*> Player::getPossibleMoves(Board *board, Side side) {
     vector<Move*> possMoves;
+    // iterate through the entire board and check for valid moves
     for (int x = 0; x < 8; x++) {
         for (int y = 0; y < 8; y++) {
             Move* testMove = new Move(x, y);
             if (board->checkMove(testMove, side)) {
+                // if valid add to vector
                 possMoves.push_back(testMove);
             }
         }
     }
-    //cerr << "got possible moves" << endl;
     return possMoves;
 }
 
