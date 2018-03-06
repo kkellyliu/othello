@@ -17,7 +17,6 @@ Player::Player(Side side) {
 
     playerBoard = new Board;
     mySide = side;
-    // cout << "helllo" << endl;
 }
 
 /*
@@ -54,10 +53,10 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
     int minMax = -99999;
 
     vector<Move*> possibleMoves1 = getPossibleMoves(playerBoard, mySide);
-    //cerr << "possible moves fine " << endl;
+
     for (unsigned int i = 0; i < possibleMoves1.size(); i++) 
         {
-        //cerr << "move1 " << possibleMoves1[i]->x << " " << possibleMoves1[i]->y << endl;
+        
         Board *tempBoard1 = playerBoard->copy();
         tempBoard1->doMove(possibleMoves1[i], mySide);
         vector<Move*> possibleMoves2 = getPossibleMoves(tempBoard1, otherSide(mySide));
@@ -65,7 +64,7 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
 
         for (unsigned int j = 0; j < possibleMoves2.size(); j++)
         {
-            //cerr << "move2 " << possibleMoves2[j]->x << " " << possibleMoves2[j]->y << endl;
+            
             Board *tempBoard2 = tempBoard1->copy();
             tempBoard2->doMove(possibleMoves2[j], otherSide(mySide));
             int score = heuristic(tempBoard2);
